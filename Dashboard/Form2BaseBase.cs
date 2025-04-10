@@ -2,7 +2,7 @@
 {
     internal class Form2BaseBase
     {
-        private object components;
+        private readonly object components;
 
         /// <summary>
         /// Clean up any resources being used.

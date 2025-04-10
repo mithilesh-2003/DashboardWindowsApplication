@@ -103,6 +103,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataGridComboBoxColumn.cs" />
     <Compile Include="Employee.cs" />
     <Compile Include="EmployeeID.cs" />
     <Compile Include="EmployeeListBox.cs" />
@@ -126,6 +127,10 @@
     <Compile Include="Form2BaseBase1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\Windows\Forms\City.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="YourForm.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

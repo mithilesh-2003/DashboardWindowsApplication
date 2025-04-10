@@ -11,6 +11,8 @@ using ExcelInterop = Microsoft.Office.Interop.Excel;
 using System.Drawing.Printing;
 using System.Drawing;
 using System.Data;
+using System.Net.Sockets;
+using System.Security.Cryptography;
 
 
 
@@ -21,7 +23,9 @@ namespace Dashboard
 
     {
         private PrintDocument printDoc = new PrintDocument();
-        private object employeeListBox;
+        private object gender;
+        private object city;
+        private readonly object employeeListBox;
 
         public Form2()
         {
@@ -37,6 +41,8 @@ namespace Dashboard
 
         private void InitializeDataGridColumns()
         {
+            this.Text = "Form2";
+            this.Load += new System.EventHandler(this.Form2_Load);
             this.DataGrid = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             // Initialize your DataGrid's properties like Size, Location, etc.
@@ -49,20 +55,81 @@ namespace Dashboard
                 DataGrid.Columns.Add("Email", "Email");
                 DataGrid.Columns.Add("Dob", "Date of Birth");
                 DataGrid.Columns.Add("Address", "Address");
+                DataGrid.Columns.Add("Password", "Password");
+                DataGrid.Columns.Add("Gender", "Gender");
+                DataGrid.Columns.Add("City", "City");
+
             }
         }
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            label1.Text = "Welcome, " + Form1.Users;
+            //  MessageBox.Show("Form2 Loaded");
+            List<string> cities = new List<string>()
+            {
+                    "Select City",
+                     "Lucknow",
+                     "Kanpur",
+                     "Varanasi",
+                     "Delhi"
+            };
+
+                City.DataSource = cities;
+                label1.Text = "Welcome " + Form1.Users;
+
+               // MessageBox.Show("Form2 Loaded");
+                BindCityDropdown();
+                label1.Text = "Welcome To Dashboard :" + Form1.Users;
         }
 
 
         // Add Employee
 
+        private void BindCityDropdown()
+        {
+            string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT DISTINCT City FROM Employee WHERE City IS NOT NULL", con);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    //City.Items.Clear();
+                    //City.Items.Add("Select City");
+
+                    while (reader.Read())
+                    {
+                        string cityName = reader["City"].ToString();
+                        //MessageBox.Show("Loaded City: " + cityName); // 🧪 Debug
+                        City.Items.Add(cityName);
+                    }
+
+                    City.SelectedIndex = 0;
+                }
+                catch (Exception ex)
+                {
+                  //  MessageBox.Show("Error loading cities: " + ex.Message);
+                }
+            }
+        }
+     
+
+        private void City_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (City.SelectedIndex > 0)
+            {
+                string city = City.SelectedItem.ToString();
+                MessageBox.Show("You selected: " + city);
+            }
+        }
+
+        // Add Employee  here 
         private void Addbtn_Click(object sender, EventArgs e)
         {
-            // Clear previous message
+            // Clear previous messages
             lblMessage.Text = string.Empty;
 
             // Validate that all fields are filled in
@@ -70,9 +137,11 @@ namespace Dashboard
                 string.IsNullOrWhiteSpace(Email.Text) ||
                 string.IsNullOrWhiteSpace(Dob.Text) ||
                 string.IsNullOrWhiteSpace(Address.Text) ||
-                string.IsNullOrWhiteSpace(Password.Text))
+                string.IsNullOrWhiteSpace(Password.Text) ||
+                (!Male.Checked && !Female.Checked) || // Ensure gender is selected
+                City.SelectedIndex == 0) // Ensure city is selected (no default value)
             {
-                MessageBox.Show("All fields must be filled.");
+                MessageBox.Show("Please fill all required fields, including selecting a gender and city.");
                 return;
             }
 
@@ -104,7 +173,21 @@ namespace Dashboard
                 return;
             }
 
-            // Create the connection and command
+            // Determine gender based on selected radio button
+            string gender = Male.Checked ? "Male" : "Female"; // Assuming only Male or Female is selected
+
+            // Get the selected city from the combo box
+            // Validate that a valid city is selected
+            if (City.SelectedIndex == -1 || City.SelectedItem.ToString() == "Select City")
+            {
+                MessageBox.Show("Please select a valid city.");
+                return;
+            }
+
+            // Now safely access the selected city
+            string city = City.SelectedItem.ToString();
+
+            // Create the connection and command for inserting into the database
             string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -114,14 +197,17 @@ namespace Dashboard
                     con.Open();
 
                     // Create the command
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Employee (Name, Email, Dob, Address, Password) VALUES (@Name, @Email, @Dob, @Address, @Password)", con);
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Employee (Name, Email, Dob, Address, Password, Gender, City) " +
+                                                    "VALUES (@Name, @Email, @Dob, @Address, @Password, @Gender, @City)", con);
 
                     // Add parameters
                     cmd.Parameters.AddWithValue("@Name", Name.Text);
                     cmd.Parameters.AddWithValue("@Email", Email.Text);
                     cmd.Parameters.AddWithValue("@Dob", parsedDob); // Use parsed DateTime for DOB
                     cmd.Parameters.AddWithValue("@Address", Address.Text);
-                    cmd.Parameters.AddWithValue("@Password", Password.Text); // Access the Password TextBox's Text
+                    cmd.Parameters.AddWithValue("@Password", Password.Text);
+                    cmd.Parameters.AddWithValue("@Gender", gender); // Gender from radio buttons
+                    cmd.Parameters.AddWithValue("@City", city); // City from combo box
 
                     // Execute the command
                     cmd.ExecuteNonQuery();
@@ -132,9 +218,18 @@ namespace Dashboard
                     // Clear input fields after successful insert
                     Name.Clear();
                     Email.Clear();
-                    Dob.Clear();
+                    //Dob.Value = DateTime.MinValue;
                     Address.Clear();
                     Password.Clear();
+
+                    // Uncheck gender radio buttons (assuming Male and Female are RadioButtons)
+                    Male.Checked = false;
+                    Female.Checked = false;
+
+                    // Clear city ComboBox (reset to the default or the first item if needed)
+                    City.SelectedIndex = -1;  // -1 will reset the ComboBox to no selection, or you can use a default index if you prefer
+
+                   // Dob.Value = DateTime.Now; ;  // Reset to default item
                 }
                 catch (Exception ex)
                 {
@@ -156,112 +251,8 @@ namespace Dashboard
             return Regex.IsMatch(email, emailPattern);
         }
 
-
-
-
-        //Exit page 
-
-        private void Exitbtn_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        // Update Employee  from here Start first is right second in not
-        /*  private void UpdateEmployee_Click(object sender, EventArgs e)
-          {
-              // Clear previous message
-              lblMessage.Text = string.Empty;
-
-              // Validate that all fields are filled in
-              if (string.IsNullOrWhiteSpace(Name.Text) ||
-                  string.IsNullOrWhiteSpace(Email.Text) ||
-                  string.IsNullOrWhiteSpace(Dob.Text) ||
-                  string.IsNullOrWhiteSpace(Address.Text) ||
-                  string.IsNullOrWhiteSpace(Password.Text))
-              {
-                  MessageBox.Show("All fields must be filled.");
-                  return;
-              }
-
-              // Validate Name (should not be empty)
-              if (string.IsNullOrWhiteSpace(Name.Text))
-              {
-                  MessageBox.Show("Name cannot be empty.");
-                  return;
-              }
-
-              // Validate Email format using regular expression
-              if (!IsValidEmail(Email.Text))
-              {
-                  MessageBox.Show("Invalid email format.");
-                  return;
-              }
-
-              // Validate Date of Birth (DOB should be in a valid date format)
-              if (!DateTime.TryParse(Dob.Text, out DateTime parsedDob))
-              {
-                  MessageBox.Show("Invalid Date of Birth.");
-                  return;
-              }
-
-              // Validate Password length (at least 6 characters)
-              if (Password.Text.Length < 6)
-              {
-                  MessageBox.Show("Password must be at least 6 characters long.");
-                  return;
-              }
-
-              // Create the connection and command
-              string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
-              using (SqlConnection con = new SqlConnection(connectionString))
-              {
-                  try
-                  {
-                      // Open the connection
-                      con.Open();
-
-                      // Update the data for the provided ID
-                      int userID;
-                      if (int.TryParse(id.Text, out userID) && userID > 0)
-                      {
-                          // Update command
-                          SqlCommand updateCmd = new SqlCommand("UPDATE Employee SET Name = @Name, Email = @Email, Dob = @Dob, Address = @Address, Password = @Password WHERE id = @id", con);
-                          updateCmd.Parameters.AddWithValue("@id", userID);
-                          updateCmd.Parameters.AddWithValue("@Name", Name.Text);
-                          updateCmd.Parameters.AddWithValue("@Email", Email.Text);
-                          updateCmd.Parameters.AddWithValue("@Dob", parsedDob);
-                          updateCmd.Parameters.AddWithValue("@Address", Address.Text);
-                          updateCmd.Parameters.AddWithValue("@Password", Password.Text);
-
-                          updateCmd.ExecuteNonQuery();
-                          MessageBox.Show("Successfully updated");
-
-                          // Clear input fields after successful update
-                          Name.Clear();
-                          Email.Clear();
-                          Dob.Clear();
-                          Address.Clear();
-                          Password.Clear();
-                      }
-                      else
-                      {
-                          MessageBox.Show("Invalid ID, please enter a valid ID to update.");
-                      }
-                  }
-                  catch (Exception ex)
-                  {
-                      MessageBox.Show("Error: " + ex.Message);
-                  }
-                  finally
-                  {
-                      // Ensure the connection is closed
-                      con.Close();
-                  }
-              }
-          }*/
-
-
-        private void UpdateEmployee_Click_1(object sender, EventArgs e)
+        // Update Employee here
+        private void UpdateEmployee_Click(object sender, EventArgs e)
         {
             // Clear previous message
             lblMessage.Text = string.Empty;
@@ -302,9 +293,11 @@ namespace Dashboard
                 string.IsNullOrWhiteSpace(Email.Text) ||
                 string.IsNullOrWhiteSpace(Dob.Text) ||
                 string.IsNullOrWhiteSpace(Address.Text) ||
-                string.IsNullOrWhiteSpace(Password.Text))
+                string.IsNullOrWhiteSpace(Password.Text) ||
+               (!Male.Checked && !Female.Checked) || // Ensure gender is selected
+                City.SelectedIndex == 0)
             {
-                MessageBox.Show("All fields must be filled.");
+                MessageBox.Show("Please fill all required fields, including selecting a gender and city.");
                 return;
             }
 
@@ -336,6 +329,20 @@ namespace Dashboard
                 return;
             }
 
+            // Determine gender based on selected radio button
+            string gender = Male.Checked ? "Male" : "Female"; // Assuming only Male or Female is selected
+
+            // Get the selected city from the combo box
+            // Validate that a valid city is selected
+            if (City.SelectedIndex == -1 || City.SelectedItem.ToString() == "Select City")
+            {
+                MessageBox.Show("Please select a valid city.");
+                return;
+            }
+
+            // Now safely access the selected city
+            string city = City.SelectedItem.ToString();
+
             // Create the connection and command
             string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -346,13 +353,15 @@ namespace Dashboard
                     con.Open();
 
                     // Update the data for the selected employee
-                    SqlCommand updateCmd = new SqlCommand("UPDATE Employee SET Name = @Name, Email = @Email, Dob = @Dob, Address = @Address, Password = @Password WHERE id = @id", con);
+                    SqlCommand updateCmd = new SqlCommand("UPDATE Employee SET Name = @Name, Email = @Email, Dob = @Dob, Address = @Address, Password = @Password, Gender = @Gender, City = @City WHERE id = @id", con);
                     updateCmd.Parameters.AddWithValue("@id", selectedEmployee.id); // Use selectedEmployee ID
                     updateCmd.Parameters.AddWithValue("@Name", Name.Text);
                     updateCmd.Parameters.AddWithValue("@Email", Email.Text);
                     updateCmd.Parameters.AddWithValue("@Dob", parsedDob);
                     updateCmd.Parameters.AddWithValue("@Address", Address.Text);
                     updateCmd.Parameters.AddWithValue("@Password", Password.Text);
+                    updateCmd.Parameters.AddWithValue("@Gender", gender); // Gender from radio buttons
+                    updateCmd.Parameters.AddWithValue("@City", city);
 
                     updateCmd.ExecuteNonQuery();
                     MessageBox.Show("Successfully updated");
@@ -360,10 +369,19 @@ namespace Dashboard
                     // Clear input fields after successful update
                     Name.Clear();
                     Email.Clear();
-                    Dob.Clear();
+                    // Dob.Clear();
                     Address.Clear();
                     Password.Clear();
                     id.Clear();
+
+                    // Uncheck gender radio buttons (assuming Male and Female are RadioButtons)
+                    Male.Checked = false;
+                    Female.Checked = false;
+
+                    // Clear city ComboBox (reset to the default or the first item if needed)
+                    City.SelectedIndex = -1;  // -1 will reset the ComboBox to no selection, or you can use a default index if you prefer
+
+                    // Dob.Value = DateTime.Now;
                 }
                 catch (Exception ex)
                 {
@@ -377,45 +395,7 @@ namespace Dashboard
             }
         }
 
-        // Helper method to get an employee by ID (this can be called when manually entering an ID)
-        private Employee GetEmployeeById(int employeeId)
-        {
-            string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address, Password FROM Employee WHERE id = @id", con);
-                    cmd.Parameters.AddWithValue("@id", employeeId);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        return new Employee
-                        {
-                            id = (int)reader["id"],
-                            Name = reader["Name"].ToString(),
-                            Email = reader["Email"].ToString(),
-                            Dob = Convert.ToDateTime(reader["Dob"]),
-                            Address = reader["Address"].ToString(),
-                            Password = reader["Password"].ToString()
-                        };
-                    }
-                }
-                catch (Exception)
-                {
-                    // Handle exceptions as necessary
-                }
-            }
-            return null; // Return null if no employee is found with the provided ID
-        }
-
-        // Update Employee  from here End 
-
-
-
-        //Delete Employee
+        // Delete Employee From Here 
         private void DeleteEmployee_Click_1(object sender, EventArgs e)
         {
             // Clear previous message
@@ -464,9 +444,18 @@ namespace Dashboard
                             id.Clear();
                             Name.Clear();
                             Email.Clear();
-                            Dob.Clear();
+                            //Dob.Clear();
                             Address.Clear();
                             Password.Clear();
+
+                            // Uncheck gender radio buttons (assuming Male and Female are RadioButtons)
+                            Male.Checked = false;
+                            Female.Checked = false;
+
+                            // Clear city ComboBox (reset to the default or the first item if needed)
+                            City.SelectedIndex = -1;  // -1 will reset the ComboBox to no selection, or you can use a default index if you prefer
+
+                            // Dob.Value = DateTime.Now;
                         }
                         else
                         {
@@ -492,9 +481,9 @@ namespace Dashboard
         }
 
 
-        //serch Employee
+        //serch Employee And Also Click to go update 
 
-        private void SearchAllEmployees_Click_1(object sender, EventArgs e)
+        private void SearchAllEmployees_Click(object sender, EventArgs e)
         {
             // Clear any previous data from the DataGridView
             DataGrid.Rows.Clear();
@@ -508,6 +497,9 @@ namespace Dashboard
                 DataGrid.Columns.Add("Email", "Email");
                 DataGrid.Columns.Add("Dob", "Date of Birth");
                 DataGrid.Columns.Add("Address", "Address");
+                DataGrid.Columns.Add("Gender", "Gender");
+                DataGrid.Columns.Add("City", "City");
+
             }
 
             // Create the connection string
@@ -521,7 +513,7 @@ namespace Dashboard
                     con.Open();
 
                     // Create the query to fetch all employees
-                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address FROM Employee", con);
+                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address,Gender,City FROM Employee", con);
 
                     // Execute the query and retrieve data
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -537,7 +529,10 @@ namespace Dashboard
                                 reader["Name"].ToString(),  // Name
                                 reader["Email"].ToString(),  // Email
                                 reader["Dob"].ToString(),  // Date of Birth
-                                reader["Address"].ToString()  // Address
+                                reader["Address"].ToString(),  // Address
+                                reader["Gender"].ToString(),  // Address
+                                reader["City"].ToString() // Address
+
                             );
                         }
                     }
@@ -559,12 +554,93 @@ namespace Dashboard
             }
         }
 
-        private void DataGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+
+        private void DataGrid_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
-            // Check if columns are not already added to prevent duplicates
             DataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            if (e.RowIndex >= 0)
+            {
+                // Debug: Check the clicked row's ID value
+                Console.WriteLine("Row clicked with ID: " + DataGrid.Rows[e.RowIndex].Cells["id"].Value);
+
+                // Get the ID of the selected employee from the DataGridView
+                int employeeId = Convert.ToInt32(DataGrid.Rows[e.RowIndex].Cells["id"].Value);
+
+                // Now, you can load the employee details using the employee ID for updating
+                LoadEmployeeDetail(employeeId);
+            }
+
 
         }
+
+
+        private void LoadEmployeeDetail(int employeeId)
+        {
+            string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    // Open the connection
+                    con.Open();
+
+                    // SQL query to fetch employee details by ID
+                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address, Password, Gender, City FROM Employee WHERE id = @id", con);
+                    cmd.Parameters.AddWithValue("@id", employeeId);
+
+                    // Execute the query and retrieve data
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        // Debugging: Check the employee details retrieved
+                        Console.WriteLine("Loaded employee with ID: " + reader["id"]);
+
+                        // Populate the form fields with the employee details
+                        id.Text = reader["id"].ToString(); // Populate ID field as well
+                        Name.Text = reader["Name"].ToString();
+                        Email.Text = reader["Email"].ToString();
+                        Dob.Text = Convert.ToDateTime(reader["Dob"]).ToString("yyyy-MM-dd"); // Ensure correct format
+                        Address.Text = reader["Address"].ToString();
+                        Password.Text = reader["Password"].ToString();
+
+                        // Handling Gender - assuming you have Male and Female radio buttons
+                        string gender = reader["Gender"].ToString();
+                        if (gender == "Male")
+                        {
+                            Male.Checked = true;  // Check the Male radio button
+                            Female.Checked = false;
+                        }
+                        else if (gender == "Female")
+                        {
+                            Female.Checked = true;  // Check the Female radio button
+                            Male.Checked = false;
+                        }
+
+                        // Handling City - assuming you have a ComboBox for City
+                        string city = reader["City"].ToString();
+                        if (!string.IsNullOrEmpty(city))
+                        {
+                            City.SelectedItem = city;  // Set the selected city in the ComboBox
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("No employee found with this ID.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+                finally
+                {
+                    con.Close(); // Ensure the connection is closed
+                }
+            }
+        }
+
+
         // Download Employee Details
         private void ImportToExcel_Click(object sender, EventArgs e)
         {
@@ -585,6 +661,8 @@ namespace Dashboard
             worksheet.Cells[1, 3] = "Email";
             worksheet.Cells[1, 4] = "Date of Birth";
             worksheet.Cells[1, 5] = "Address";
+            worksheet.Cells[1, 6] = "Gender";
+            worksheet.Cells[1, 7] = "City";
 
             // Create the connection and command
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -595,7 +673,7 @@ namespace Dashboard
                     con.Open();
 
                     // Create the SQL command to fetch all employees
-                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address FROM Employee", con);
+                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address, Gender, City FROM Employee", con);
 
                     // Execute the query and retrieve data
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -606,11 +684,14 @@ namespace Dashboard
                     // Loop through the data and add it to the Excel sheet
                     while (reader.Read())
                     {
+                        // Add data to distinct columns
                         worksheet.Cells[rowIndex, 1] = reader["id"].ToString(); // ID
                         worksheet.Cells[rowIndex, 2] = reader["Name"].ToString(); // Name
                         worksheet.Cells[rowIndex, 3] = reader["Email"].ToString(); // Email
                         worksheet.Cells[rowIndex, 4] = reader["Dob"].ToString(); // Date of Birth
                         worksheet.Cells[rowIndex, 5] = reader["Address"].ToString(); // Address
+                        worksheet.Cells[rowIndex, 6] = reader["Gender"].ToString(); // Gender
+                        worksheet.Cells[rowIndex, 7] = reader["City"].ToString(); // City
 
                         rowIndex++;
                     }
@@ -628,11 +709,9 @@ namespace Dashboard
                     con.Close();
                 }
             }
-
         }
 
-        // Print Employee detail
-
+        // Print Employee details
         private void PrintDataButton_Click_1(object sender, EventArgs e)
         {
             // Create the connection string
@@ -649,8 +728,8 @@ namespace Dashboard
                     // Open the connection
                     con.Open();
 
-                    // SQL query to fetch all employee data
-                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address FROM Employee ,Password", con);
+                    // SQL query to fetch all employee data (fixed issue with Password field)
+                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address, Gender, City FROM Employee", con);
 
                     // Execute the query and retrieve data
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -658,7 +737,7 @@ namespace Dashboard
                     // Loop through the data and add it to the employeeData list
                     while (reader.Read())
                     {
-                        string dataRow = $"{reader["id"]} | {reader["Name"]} | {reader["Email"]} | {reader["Dob"]} | {reader["Address"]}| {reader["Password"]}";
+                        string dataRow = $"{reader["id"]} | {reader["Name"]} | {reader["Email"]} | {reader["Dob"]} | {reader["Address"]} | {reader["Gender"]} | {reader["City"]}";
                         employeeData.Add(dataRow);
                     }
                 }
@@ -672,23 +751,31 @@ namespace Dashboard
             // Set up the printing
             printDoc.PrintPage += (s, args) =>
             {
-                // Print the header first
+                // Set up fonts for headers and data
+                Font headerFont = new Font("Arial", 12, FontStyle.Bold);
+                Font dataFont = new Font("Arial", 10);
+
                 float yPos = 10;
-                string header = "ID | Name | Email | Date of Birth | Address | Password";
-                args.Graphics.DrawString(header, new Font("Arial", 12, FontStyle.Bold), Brushes.Black, 10, yPos);
-                yPos += 20;  // Move the position down for data
+                float leftMargin = 10;
+                float topMargin = 10;
+                float lineHeight = 20;
+
+                // Print the header first
+                string header = "ID | Name | Email | Date of Birth | Address | Gender | City";
+                args.Graphics.DrawString(header, headerFont, Brushes.Black, leftMargin, yPos);
+                yPos += lineHeight;  // Move the position down for data
 
                 // Print each row of data
                 foreach (var dataRow in employeeData)
                 {
-                    args.Graphics.DrawString(dataRow, new Font("Arial", 10), Brushes.Black, 10, yPos);
-                    yPos += 20;  // Move the position down for next row
+                    args.Graphics.DrawString(dataRow, dataFont, Brushes.Black, leftMargin, yPos);
+                    yPos += lineHeight;  // Move the position down for next row
 
                     // Check if we are reaching the bottom of the page and add a new page if necessary
-                    if (yPos + 20 > args.PageBounds.Height)
+                    if (yPos + lineHeight > args.PageBounds.Height)
                     {
-                        args.HasMorePages = true;
-                        return;
+                        args.HasMorePages = true;  // Indicate that there's more content to print
+                        return;  // Exit the method to print more pages
                     }
                 }
 
@@ -699,14 +786,15 @@ namespace Dashboard
             printDoc.Print();
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
 
+        //Exit Button Here 
+        private void Exitbtn_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
 
+
         // Auto Fill data in Form When We inser id And Click CheckBox
-
-
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             // Check if an item is selected in the ListBox or ID is entered manually
@@ -739,7 +827,6 @@ namespace Dashboard
             // Call the method to load employee details by ID
             LoadEmployeeDetails(employeeId);
         }
-
         private void LoadEmployeeDetails(int employeeId)
         {
             string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
@@ -752,7 +839,7 @@ namespace Dashboard
                     con.Open();
 
                     // SQL query to fetch employee details by ID
-                    SqlCommand cmd = new SqlCommand("SELECT Name, Email, Dob, Address, Password FROM Employee WHERE id = @id", con);
+                    SqlCommand cmd = new SqlCommand("SELECT Name, Email, Dob, Address, Password, Gender, City FROM Employee WHERE id = @id", con);
                     cmd.Parameters.AddWithValue("@id", employeeId);
 
                     // Execute the query and retrieve data
@@ -762,9 +849,41 @@ namespace Dashboard
                         // Populate the form fields with the employee details
                         Name.Text = reader["Name"].ToString();
                         Email.Text = reader["Email"].ToString();
-                        Dob.Text = Convert.ToDateTime(reader["Dob"]).ToString("yyyy-MM-dd"); // Ensure correct format
+
+                        // Ensure correct Date of Birth format
+                        if (reader["Dob"] != DBNull.Value)
+                        {
+                            Dob.Value = Convert.ToDateTime(reader["Dob"]);  // Using DateTimePicker control directly
+                        }
+
                         Address.Text = reader["Address"].ToString();
                         Password.Text = reader["Password"].ToString();
+
+                        // Handling Gender (RadioButton)
+                        string Gender = reader["Gender"].ToString().Trim();
+                        if (Gender == "Male")
+                        {
+                            Male.Checked = true;  // Check the Male radio button
+                        }
+                        else if (Gender == "Female")
+                        {
+                            Female.Checked = true;  // Check the Female radio button
+                        }
+
+                        // Handling City (ComboBox/DropDown)
+                        string city = reader["City"].ToString();
+                        if (!string.IsNullOrEmpty(city))
+                        {
+                            int index = City.Items.IndexOf(city);
+                            if (index >= 0)
+                            {
+                                City.SelectedIndex = index;  // Set the index of the ComboBox to the city's position
+                            }
+                            else
+                            {
+                                MessageBox.Show("City not found in the list. Please ensure the city is available in the dropdown.");
+                            }
+                        }
                     }
                     else
                     {
@@ -777,13 +896,63 @@ namespace Dashboard
                 }
                 finally
                 {
-                    con.Close(); // Ensure the connection is closed
+                    con.Close();  // Ensure the connection is closed
                 }
-
-
             }
         }
 
+
+        // Helper method to get an employee by ID (this can be called when manually entering an ID)
+        private Employee GetEmployeeById(int employeeId)
+        {
+            string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address, Password,Gender,City FROM Employee WHERE id = @id", con);
+                    cmd.Parameters.AddWithValue("@id", employeeId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        return new Employee
+                        {
+                            id = (int)reader["id"],
+                            Name = reader["Name"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            Dob = Convert.ToDateTime(reader["Dob"]),
+                            Address = reader["Address"].ToString(),
+                            Password = reader["Password"].ToString(),
+                            Gender = reader["Gender"].ToString(),
+                            City = reader["City"].ToString()
+
+                        };
+                    }
+                }
+                catch (Exception)
+                {
+                    // Handle exceptions as necessary
+                }
+            }
+            return null; // Return null if no employee is found with the provided ID
+        }
+
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            // Refresh the form (reload the page)
+            this.Refresh();
+
+        }
+
+        private void YourForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Optional: Perform any necessary cleanup or actions when the form is closed
+            var newForm = new YourForm();
+            newForm.Show();
+        }
 
         // Auto Fill data in Form When We inser id And Click CheckBox  End Here 
 
@@ -793,9 +962,264 @@ namespace Dashboard
             public static bool Enabled { get; internal set; }
         }
 
+
         private void Form2_Load_1(object sender, EventArgs e)
         {
+            label8.Text = Properties.Settings.Default.username;
+        }
 
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void ClearBtn_Click(object sender, EventArgs e)
+        {
+            // Clear textboxes
+            id.Clear();
+            Name.Clear();
+            Email.Clear();
+            Address.Clear();
+            Password.Clear();
+
+            // Uncheck gender radio buttons (assuming Male and Female are RadioButtons)
+            Male.Checked = false;
+            Female.Checked = false;
+
+            // Clear city ComboBox (reset to the default or the first item if needed)
+            City.SelectedIndex = -1;  // -1 will reset the ComboBox to no selection, or you can use a default index if you prefer
+
+            //Dob.Value = DateTime.Now;  // Reset the DatePicker to the current date (or to a specific default date)
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string city = City.SelectedItem.ToString();
+
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Male_CheckedChanged(object sender, EventArgs e)
+        {
+            gender = "Male";
+            Gender.Text = gender;
+        }
+
+        private void Female_CheckedChanged(object sender, EventArgs e)
+        {
+            gender = "Female";
+            Gender.Text = gender;
+
+
+        }
+
+        private void Female_CheckedChanged(object sender, EventArgs e, Gender gender)
+        {
+           
+        }
+
+        private class Gender
+        {
+            internal static object Text;
+
+            internal static void Clear()
+            {
+                throw new NotImplementedException();
+            }
+
+            public static implicit operator Gender(string v)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        //private void UpdateEmployee_Click(object sender, EventArgs e)
+        //{
+        //    lblMessage.Text = string.Empty;
+
+        //    // Validate that all fields are filled in
+        //    if (string.IsNullOrWhiteSpace(Name.Text) ||
+        //        string.IsNullOrWhiteSpace(Email.Text) ||
+        //        string.IsNullOrWhiteSpace(Dob.Text) ||
+        //        string.IsNullOrWhiteSpace(Address.Text) ||
+        //        string.IsNullOrWhiteSpace(Password.Text) ||
+        //        (!Male.Checked && !Female.Checked) || // Ensure gender is selected
+        //        City.SelectedIndex == 0) // Ensure city is selected (no default value)
+        //    {
+        //        MessageBox.Show("Please fill all required fields, including selecting a gender and city.");
+        //        return;
+        //    }
+
+        //    // Validate Name (should not be empty)
+        //    if (string.IsNullOrWhiteSpace(Name.Text))
+        //    {
+        //        MessageBox.Show("Name cannot be empty.");
+        //        return;
+        //    }
+
+        //    // Validate Email format using regular expression
+        //    if (!IsValidEmail(Email.Text))
+        //    {
+        //        MessageBox.Show("Invalid email format.");
+        //        return;
+        //    }
+
+        //    // Validate Date of Birth (DOB should be in a valid date format)
+        //    if (!DateTime.TryParse(Dob.Text, out DateTime parsedDob))
+        //    {
+        //        MessageBox.Show("Invalid Date of Birth.");
+        //        return;
+        //    }
+
+        //    // Validate Password length (at least 6 characters)
+        //    if (Password.Text.Length < 6)
+        //    {
+        //        MessageBox.Show("Password must be at least 6 characters long.");
+        //        return;
+        //    }
+
+        //    // Determine gender based on selected radio button
+        //    string gender = Male.Checked ? "Male" : "Female"; // Assuming only Male or Female is selected
+
+        //    // Get the selected city from the combo box
+        //    // Validate that a valid city is selected
+        //    if (City.SelectedIndex == -1 || City.SelectedItem.ToString() == "Select City")
+        //    {
+        //        MessageBox.Show("Please select a valid city.");
+        //        return;
+        //    }
+
+        //    // Now safely access the selected city
+        //    string city = City.SelectedItem.ToString();
+
+        //    // Assuming you have an employee ID or a way to identify which employee to update
+        //    int employeeId = GetEmployeeId(); // This should be defined somewhere, perhaps from a selected employee in the UI.
+
+        //    if (employeeId == 0)
+        //    {
+        //        MessageBox.Show("No employee selected to update.");
+        //        return;
+        //    }
+
+        //    // Create the connection and command for updating the database
+        //    string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
+        //    using (SqlConnection con = new SqlConnection(connectionString))
+        //    {
+        //        try
+        //        {
+        //            // Open the connection
+        //            con.Open();
+
+        //            // Create the command
+        //            SqlCommand cmd = new SqlCommand("UPDATE Employee " +
+        //                                            "SET Name = @Name, Email = @Email, Dob = @Dob, Address = @Address, Password = @Password, Gender = @Gender, City = @City " +
+        //                                            "WHERE EmployeeId = @EmployeeId", con);
+
+        //            // Add parameters
+        //            cmd.Parameters.AddWithValue("@Name", Name.Text);
+        //            cmd.Parameters.AddWithValue("@Email", Email.Text);
+        //            cmd.Parameters.AddWithValue("@Dob", parsedDob); // Use parsed DateTime for DOB
+        //            cmd.Parameters.AddWithValue("@Address", Address.Text);
+        //            cmd.Parameters.AddWithValue("@Password", Password.Text);
+        //            cmd.Parameters.AddWithValue("@Gender", gender); // Gender from radio buttons
+        //            cmd.Parameters.AddWithValue("@City", city); // City from combo box
+        //            cmd.Parameters.AddWithValue("@EmployeeId", employeeId); // Employee ID to identify which record to update
+
+        //            // Execute the command
+        //            cmd.ExecuteNonQuery();
+
+        //            // Display success message
+        //            MessageBox.Show("Employee details successfully updated");
+
+        //            // Optionally, clear input fields or reset UI after the update
+        //            Name.Clear();
+        //            Email.Clear();
+        //            Address.Clear();
+        //            Password.Clear();
+        //            Male.Checked = false; // Uncheck the radio buttons
+        //            Female.Checked = false;
+        //            City.SelectedIndex = 0; // Reset the dropdown to default value
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // Handle any errors that might occur
+        //            MessageBox.Show("Error: " + ex.Message);
+        //        }
+        //        finally
+        //        {
+        //            // Ensure the connection is closed
+        //            con.Close();
+        //        }
+
+        //    }
+
+        //}
+
+        //private int GetEmployeeId()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //private int GetEmployeeId()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+
+        }
+      
+
+
+        private Employee GetEmployeeByid(int employeeId)
+        {
+            string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True";
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT id, Name, Email, Dob, Address, Password, Gender, City FROM Employee WHERE id = @id", con);
+                    cmd.Parameters.AddWithValue("@id", employeeId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        return new Employee
+                        {
+                            id = (int)reader["id"],
+                            Name = reader["Name"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            Dob = Convert.ToDateTime(reader["Dob"]),
+                            Address = reader["Address"].ToString(),
+                            Password = reader["Password"].ToString(),
+                            Gender = reader["Gender"].ToString(),
+                            City = reader["City"].ToString()
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+            }
+            return null; // Return null if no employee is found with the provided ID
         }
 
        

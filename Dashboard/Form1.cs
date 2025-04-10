@@ -9,7 +9,7 @@ namespace Dashboard
     public partial class Form1 : Form
     {
 
-        private SqlConnection con = new SqlConnection("Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True");
+        private readonly SqlConnection con = new SqlConnection("Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True");
         SqlCommand cmd;
         SqlDataReader dr;
         private object bunifuMaterialtxtname;
@@ -34,6 +34,7 @@ namespace Dashboard
 
                 // Open the connection
                 await con.OpenAsync();
+
 
                 // Execute the command and check for rows
                 dr = await cmd.ExecuteReaderAsync();

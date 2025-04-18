@@ -1290,53 +1290,7 @@ namespace Dashboard
         }
 
 
-        //private void Form_Load(object sender, EventArgs e)
-        //{
-        //    this.Text = "Form2";
-
-        //    List<string> educationLevels = new List<string>
-        //    {
-        //        "High School",
-        //        "Intermediate",
-        //        "Graduation",
-        //        "Post Graduation",
-        //        "Diploma",
-        //        "PhD"
-        //    };
-
-        //    Qualification.Items.AddRange(educationLevels.ToArray());
-        //}
-
-        //private void Qualification_ItemCheck(object sender, ItemCheckEventArgs e)
-        //{
-        //    this.BeginInvoke((MethodInvoker)delegate
-        //    {
-        //        List<string> selectedQualifications = new List<string>();
-
-        //        // Go through all items
-        //        for (int i = 0; i < Qualification.Items.Count; i++)
-        //        {
-        //            bool isChecked = Qualification.GetItemChecked(i);
-
-        //            // This one is being changed, so we use e.NewValue
-        //            if (i == e.Index)
-        //            {
-        //                isChecked = (e.NewValue == CheckState.Checked);
-        //            }
-
-        //            if (isChecked)
-        //            {
-        //                selectedQualifications.Add(Qualification.Items[i].ToString());
-        //            }
-        //        }
-
-        //        // Join into comma-separated string or do whatever you want
-        //        string result = string.Join(", ", selectedQualifications);
-        //        // For example, show or assign to a label
-        //        MessageBox.Show("Selected Qualifications: " + result);
-        //        // Or: someTextBox.Text = result;
-        //    });
-        //}
+        
 
 
         private void EmpId_Click(object sender, EventArgs e)
@@ -1344,78 +1298,6 @@ namespace Dashboard
 
         }
 
-
-        //private void AddDegree_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        // Input validation
-        //        if (string.IsNullOrWhiteSpace(Employeeid.Text) ||
-        //            Qualification.SelectedItem == null ||
-        //            string.IsNullOrWhiteSpace(Year.Text) ||
-        //            string.IsNullOrWhiteSpace(Percentage.Text) ||
-        //            string.IsNullOrWhiteSpace(Emp_Name.Text) ||
-        //            string.IsNullOrWhiteSpace(College.Text) ||
-        //            string.IsNullOrWhiteSpace(Marks.Text))
-        //        {
-        //            MessageBox.Show("Please fill all fields before submitting.");
-        //            return;
-        //        }
-
-        //        int empId = int.Parse(Employeeid.Text);
-        //        int year = int.Parse(Year.Text);
-        //        float percentage = float.Parse(Percentage.Text);
-        //        string qualification = Qualification.SelectedItem.ToString();
-
-        //        string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True;";
-
-        //        using (SqlConnection conn = new SqlConnection(connectionString))
-        //        {
-        //            conn.Open();
-
-        //            // ✅ Step 1: Check if employee exists
-        //            string checkEmployeeQuery = "SELECT COUNT(*) FROM Employee WHERE id = @Employeeid";
-
-        //            using (SqlCommand checkCmd = new SqlCommand(checkEmployeeQuery, conn))
-        //            {
-        //                checkCmd.Parameters.AddWithValue("@Employeeid", empId);
-        //                int count = (int)checkCmd.ExecuteScalar();
-
-        //                if (count == 0)
-        //                {
-        //                    MessageBox.Show("Employee ID not found. Please enter a valid employee.");
-        //                    return;
-        //                }
-        //            }
-
-        //            // ✅ Step 2: Insert qualification if employee exists
-        //            string insertQuery = @"INSERT INTO Qualification 
-        //  (id, Qualification, Year, Percentage, Emp_Name, College, Marks)
-        //  VALUES (@Employeeid, @Qualification, @Year, @Percentage, @Emp_Name, @College, @Marks)";
-
-        //            using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
-        //            {
-        //                cmd.Parameters.AddWithValue("@Employeeid", empId);
-        //                cmd.Parameters.AddWithValue("@Qualification", qualification);
-        //                cmd.Parameters.AddWithValue("@Year", year);
-        //                cmd.Parameters.AddWithValue("@Percentage", percentage);
-        //                cmd.Parameters.AddWithValue("@Emp_Name", Emp_Name.Text);
-        //                cmd.Parameters.AddWithValue("@College", College.Text);
-        //                cmd.Parameters.AddWithValue("@Marks", Marks.Text);
-
-        //                cmd.ExecuteNonQuery();
-        //                MessageBox.Show("Qualification inserted successfully!");
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Error:\n" + ex.ToString());
-        //    }
-        //}
-
-
-        // Event for updating Percentage when Marks or TotalMarks changes
 
         private void Marks_TextChanged(object sender, EventArgs e)
         {

@@ -65,12 +65,34 @@ namespace Dashboard
             this.PrintDataButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.mySqlCommand1 = new MySql.Data.MySqlClient.MySqlCommand();
+            this.NotePad = new System.Windows.Forms.Button();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.label15 = new System.Windows.Forms.Label();
+            this.TotalMarks = new System.Windows.Forms.TextBox();
+            this.Delete = new System.Windows.Forms.Button();
+            this.Find = new System.Windows.Forms.Button();
+            this.Year = new System.Windows.Forms.ComboBox();
+            this.Qualification = new System.Windows.Forms.ComboBox();
+            this.EmpName = new System.Windows.Forms.Label();
+            this.Emp_Name = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.AddDegree = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.EmpId = new System.Windows.Forms.Label();
+            this.College = new System.Windows.Forms.TextBox();
+            this.Percentage = new System.Windows.Forms.TextBox();
+            this.Marks = new System.Windows.Forms.TextBox();
+            this.Employeeid = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // Exitbtn
@@ -88,12 +110,11 @@ namespace Dashboard
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(483, 4);
+            this.label8.Location = new System.Drawing.Point(492, 7);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(133, 25);
             this.label8.TabIndex = 23;
             this.label8.Text = "Admin Panal";
-            this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // pictureBox1
             // 
@@ -112,9 +133,9 @@ namespace Dashboard
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(239, 5);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(249, 25);
+            this.label1.Size = new System.Drawing.Size(255, 25);
             this.label1.TabIndex = 8;
-            this.label1.Text = "Welcome To Dashboard:";
+            this.label1.Text = "Welcome To Dashboard :";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label2
@@ -216,7 +237,7 @@ namespace Dashboard
             this.lblMessage.AutoSize = true;
             this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessage.ForeColor = System.Drawing.Color.Coral;
-            this.lblMessage.Location = new System.Drawing.Point(317, 94);
+            this.lblMessage.Location = new System.Drawing.Point(107, 94);
             this.lblMessage.Name = "lblMessage";
             this.lblMessage.Size = new System.Drawing.Size(167, 20);
             this.lblMessage.TabIndex = 18;
@@ -230,10 +251,10 @@ namespace Dashboard
             this.DataGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.Sunken;
             this.DataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataGrid.GridColor = System.Drawing.SystemColors.Control;
-            this.DataGrid.Location = new System.Drawing.Point(76, 418);
+            this.DataGrid.Location = new System.Drawing.Point(46, 444);
             this.DataGrid.Name = "DataGrid";
             this.DataGrid.RowHeadersWidth = 200;
-            this.DataGrid.Size = new System.Drawing.Size(669, 107);
+            this.DataGrid.Size = new System.Drawing.Size(669, 95);
             this.DataGrid.TabIndex = 19;
             this.DataGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellContentClick_1);
             // 
@@ -260,9 +281,9 @@ namespace Dashboard
             this.panel2.Controls.Add(this.Password);
             this.panel2.Controls.Add(this.label4);
             this.panel2.Controls.Add(this.Address);
-            this.panel2.Location = new System.Drawing.Point(304, 123);
+            this.panel2.Location = new System.Drawing.Point(54, 133);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(268, 266);
+            this.panel2.Size = new System.Drawing.Size(245, 283);
             this.panel2.TabIndex = 20;
             this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
             // 
@@ -332,7 +353,7 @@ namespace Dashboard
             // 
             // ClearBtn
             // 
-            this.ClearBtn.Location = new System.Drawing.Point(184, 226);
+            this.ClearBtn.Location = new System.Drawing.Point(137, 243);
             this.ClearBtn.Name = "ClearBtn";
             this.ClearBtn.Size = new System.Drawing.Size(75, 23);
             this.ClearBtn.TabIndex = 22;
@@ -343,7 +364,7 @@ namespace Dashboard
             // 
             // UpdateEmployee
             // 
-            this.UpdateEmployee.Location = new System.Drawing.Point(7, 226);
+            this.UpdateEmployee.Location = new System.Drawing.Point(21, 244);
             this.UpdateEmployee.Name = "UpdateEmployee";
             this.UpdateEmployee.Size = new System.Drawing.Size(75, 23);
             this.UpdateEmployee.TabIndex = 1;
@@ -365,7 +386,7 @@ namespace Dashboard
             // 
             // Addbtn
             // 
-            this.Addbtn.Location = new System.Drawing.Point(129, 9);
+            this.Addbtn.Location = new System.Drawing.Point(120, 9);
             this.Addbtn.Name = "Addbtn";
             this.Addbtn.Size = new System.Drawing.Size(75, 23);
             this.Addbtn.TabIndex = 0;
@@ -376,7 +397,7 @@ namespace Dashboard
             // 
             // DeleteEmployee
             // 
-            this.DeleteEmployee.Location = new System.Drawing.Point(243, 10);
+            this.DeleteEmployee.Location = new System.Drawing.Point(226, 10);
             this.DeleteEmployee.Name = "DeleteEmployee";
             this.DeleteEmployee.Size = new System.Drawing.Size(75, 23);
             this.DeleteEmployee.TabIndex = 20;
@@ -386,7 +407,7 @@ namespace Dashboard
             // 
             // SearchAllEmployees
             // 
-            this.SearchAllEmployees.Location = new System.Drawing.Point(396, 10);
+            this.SearchAllEmployees.Location = new System.Drawing.Point(337, 10);
             this.SearchAllEmployees.Name = "SearchAllEmployees";
             this.SearchAllEmployees.Size = new System.Drawing.Size(75, 23);
             this.SearchAllEmployees.TabIndex = 21;
@@ -396,7 +417,7 @@ namespace Dashboard
             // 
             // ImportToExcel
             // 
-            this.ImportToExcel.Location = new System.Drawing.Point(539, 10);
+            this.ImportToExcel.Location = new System.Drawing.Point(452, 10);
             this.ImportToExcel.Name = "ImportToExcel";
             this.ImportToExcel.Size = new System.Drawing.Size(75, 23);
             this.ImportToExcel.TabIndex = 20;
@@ -406,7 +427,7 @@ namespace Dashboard
             // 
             // PrintDataButton
             // 
-            this.PrintDataButton.Location = new System.Drawing.Point(668, 10);
+            this.PrintDataButton.Location = new System.Drawing.Point(689, 10);
             this.PrintDataButton.Name = "PrintDataButton";
             this.PrintDataButton.Size = new System.Drawing.Size(75, 23);
             this.PrintDataButton.TabIndex = 22;
@@ -429,6 +450,7 @@ namespace Dashboard
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel3.Controls.Add(this.NotePad);
             this.panel3.Controls.Add(this.Addbtn);
             this.panel3.Controls.Add(this.PrintDataButton);
             this.panel3.Controls.Add(this.ImportToExcel);
@@ -441,12 +463,224 @@ namespace Dashboard
             this.panel3.TabIndex = 25;
             this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
             // 
-            // mySqlCommand1
+            // NotePad
             // 
-            this.mySqlCommand1.CacheAge = 0;
-            this.mySqlCommand1.Connection = null;
-            this.mySqlCommand1.EnableCaching = false;
-            this.mySqlCommand1.Transaction = null;
+            this.NotePad.Location = new System.Drawing.Point(556, 10);
+            this.NotePad.Name = "NotePad";
+            this.NotePad.Size = new System.Drawing.Size(109, 23);
+            this.NotePad.TabIndex = 23;
+            this.NotePad.Text = "ShowNotePad";
+            this.NotePad.UseVisualStyleBackColor = true;
+            this.NotePad.Click += new System.EventHandler(this.NotePad_Click_1);
+            // 
+            // panel4
+            // 
+            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel4.Controls.Add(this.label15);
+            this.panel4.Controls.Add(this.TotalMarks);
+            this.panel4.Controls.Add(this.Delete);
+            this.panel4.Controls.Add(this.Find);
+            this.panel4.Controls.Add(this.Year);
+            this.panel4.Controls.Add(this.Qualification);
+            this.panel4.Controls.Add(this.EmpName);
+            this.panel4.Controls.Add(this.Emp_Name);
+            this.panel4.Controls.Add(this.label14);
+            this.panel4.Controls.Add(this.AddDegree);
+            this.panel4.Controls.Add(this.label13);
+            this.panel4.Controls.Add(this.label12);
+            this.panel4.Controls.Add(this.label11);
+            this.panel4.Controls.Add(this.label10);
+            this.panel4.Controls.Add(this.EmpId);
+            this.panel4.Controls.Add(this.College);
+            this.panel4.Controls.Add(this.Percentage);
+            this.panel4.Controls.Add(this.Marks);
+            this.panel4.Controls.Add(this.Employeeid);
+            this.panel4.Location = new System.Drawing.Point(458, 132);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(251, 284);
+            this.panel4.TabIndex = 26;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(13, 75);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(62, 13);
+            this.label15.TabIndex = 39;
+            this.label15.Text = "Total marks";
+            // 
+            // TotalMarks
+            // 
+            this.TotalMarks.Location = new System.Drawing.Point(91, 69);
+            this.TotalMarks.Name = "TotalMarks";
+            this.TotalMarks.Size = new System.Drawing.Size(134, 20);
+            this.TotalMarks.TabIndex = 38;
+            this.TotalMarks.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // Delete
+            // 
+            this.Delete.Location = new System.Drawing.Point(6, 254);
+            this.Delete.Name = "Delete";
+            this.Delete.Size = new System.Drawing.Size(75, 23);
+            this.Delete.TabIndex = 37;
+            this.Delete.Text = "Delete";
+            this.Delete.UseVisualStyleBackColor = true;
+            this.Delete.Click += new System.EventHandler(this.Delete_Click_1);
+            // 
+            // Find
+            // 
+            this.Find.Location = new System.Drawing.Point(86, 253);
+            this.Find.Name = "Find";
+            this.Find.Size = new System.Drawing.Size(75, 23);
+            this.Find.TabIndex = 36;
+            this.Find.Text = "Find";
+            this.Find.UseVisualStyleBackColor = true;
+            this.Find.Click += new System.EventHandler(this.Delete_Click);
+            // 
+            // Year
+            // 
+            this.Year.FormattingEnabled = true;
+            this.Year.Location = new System.Drawing.Point(91, 156);
+            this.Year.Name = "Year";
+            this.Year.Size = new System.Drawing.Size(134, 21);
+            this.Year.TabIndex = 35;
+            this.Year.SelectedIndexChanged += new System.EventHandler(this.Year_SelectedIndexChanged);
+            // 
+            // Qualification
+            // 
+            this.Qualification.FormattingEnabled = true;
+            this.Qualification.Location = new System.Drawing.Point(92, 38);
+            this.Qualification.Name = "Qualification";
+            this.Qualification.Size = new System.Drawing.Size(134, 21);
+            this.Qualification.TabIndex = 34;
+            this.Qualification.SelectedIndexChanged += new System.EventHandler(this.Qualification_SelectedIndexChanged);
+            // 
+            // EmpName
+            // 
+            this.EmpName.AutoSize = true;
+            this.EmpName.Location = new System.Drawing.Point(19, 215);
+            this.EmpName.Name = "EmpName";
+            this.EmpName.Size = new System.Drawing.Size(62, 13);
+            this.EmpName.TabIndex = 17;
+            this.EmpName.Text = "Emp_Name";
+            // 
+            // Emp_Name
+            // 
+            this.Emp_Name.Location = new System.Drawing.Point(92, 210);
+            this.Emp_Name.Name = "Emp_Name";
+            this.Emp_Name.Size = new System.Drawing.Size(134, 20);
+            this.Emp_Name.TabIndex = 16;
+            this.Emp_Name.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(16, 46);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(65, 13);
+            this.label14.TabIndex = 14;
+            this.label14.Text = "Qualification";
+            // 
+            // AddDegree
+            // 
+            this.AddDegree.Location = new System.Drawing.Point(165, 252);
+            this.AddDegree.Name = "AddDegree";
+            this.AddDegree.Size = new System.Drawing.Size(75, 23);
+            this.AddDegree.TabIndex = 13;
+            this.AddDegree.Text = "AddDegree";
+            this.AddDegree.UseVisualStyleBackColor = true;
+            this.AddDegree.Click += new System.EventHandler(this.AddDegree_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(33, 190);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(42, 13);
+            this.label13.TabIndex = 12;
+            this.label13.Text = "College";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(40, 163);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(29, 13);
+            this.label12.TabIndex = 11;
+            this.label12.Text = "Year";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(17, 135);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(61, 13);
+            this.label11.TabIndex = 10;
+            this.label11.Text = "Persentage";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(36, 105);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(36, 13);
+            this.label10.TabIndex = 9;
+            this.label10.Text = "Marks";
+            // 
+            // EmpId
+            // 
+            this.EmpId.AutoSize = true;
+            this.EmpId.Location = new System.Drawing.Point(40, 16);
+            this.EmpId.Name = "EmpId";
+            this.EmpId.Size = new System.Drawing.Size(42, 13);
+            this.EmpId.TabIndex = 8;
+            this.EmpId.Text = "Emp_id";
+            this.EmpId.Click += new System.EventHandler(this.EmpId_Click);
+            // 
+            // College
+            // 
+            this.College.Location = new System.Drawing.Point(92, 183);
+            this.College.Name = "College";
+            this.College.Size = new System.Drawing.Size(134, 20);
+            this.College.TabIndex = 7;
+            this.College.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // Percentage
+            // 
+            this.Percentage.Location = new System.Drawing.Point(91, 128);
+            this.Percentage.Name = "Percentage";
+            this.Percentage.Size = new System.Drawing.Size(134, 20);
+            this.Percentage.TabIndex = 5;
+            this.Percentage.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // Marks
+            // 
+            this.Marks.Location = new System.Drawing.Point(91, 99);
+            this.Marks.Name = "Marks";
+            this.Marks.Size = new System.Drawing.Size(134, 20);
+            this.Marks.TabIndex = 4;
+            this.Marks.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // Employeeid
+            // 
+            this.Employeeid.Location = new System.Drawing.Point(91, 9);
+            this.Employeeid.Name = "Employeeid";
+            this.Employeeid.Size = new System.Drawing.Size(134, 20);
+            this.Employeeid.TabIndex = 3;
+            this.Employeeid.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.Employeeid.TextChanged += new System.EventHandler(this.Emp_id_TextChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.Color.Coral;
+            this.label9.Location = new System.Drawing.Point(525, 94);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(133, 20);
+            this.label9.TabIndex = 27;
+            this.label9.Text = "Add  Qualification";
+            this.label9.UseWaitCursor = true;
             // 
             // Form2
             // 
@@ -454,12 +688,16 @@ namespace Dashboard
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(784, 553);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.DataGrid);
             this.Controls.Add(this.lblMessage);
             this.ForeColor = System.Drawing.SystemColors.InfoText;
+            this.Name = "Form2";
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.Load += new System.EventHandler(this.Form2_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).EndInit();
@@ -468,10 +706,14 @@ namespace Dashboard
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
+
+  
 
         private void Gender_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -522,8 +764,29 @@ namespace Dashboard
         private System.Windows.Forms.RadioButton Male;
         private System.Windows.Forms.RadioButton Female;
         private System.Windows.Forms.Label City1;
-        private MySql.Data.MySqlClient.MySqlCommand mySqlCommand1;
         private System.Windows.Forms.ComboBox City;
         private System.Windows.Forms.DateTimePicker Dob;
+        private System.Windows.Forms.Button NotePad;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label EmpId;
+        private System.Windows.Forms.TextBox College;
+        private System.Windows.Forms.TextBox Percentage;
+        private System.Windows.Forms.TextBox Marks;
+        private System.Windows.Forms.TextBox Employeeid;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button AddDegree;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label EmpName;
+        private System.Windows.Forms.TextBox Emp_Name;
+        private System.Windows.Forms.ComboBox Qualification;
+        private System.Windows.Forms.ComboBox Year;
+        private System.Windows.Forms.Button Find;
+        private System.Windows.Forms.Button Delete;
+        private System.Windows.Forms.TextBox TotalMarks;
+        private System.Windows.Forms.Label label15;
     }
 }

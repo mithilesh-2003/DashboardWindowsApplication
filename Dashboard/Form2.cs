@@ -16,10 +16,6 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
-
-
-
-
 namespace Dashboard
 {
     public partial class Form2 : Form
@@ -40,11 +36,8 @@ namespace Dashboard
             InitializeDataGridColumns();
             InitializeComponent();
             this.Load += Form2_Load;
-            //Qualification.ItemCheck += Qualification_SelectedIndexChanged;
-            // this.Qualification.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.Qualification_SelectedIndexChanged);
 
             this.Load += new System.EventHandler(this.Form2_Load);
-
 
         }
 
@@ -139,7 +132,6 @@ namespace Dashboard
             throw new NotImplementedException();
         }
 
-
         // Bind city in drop down 
 
         private void BindCityDropdown()
@@ -203,8 +195,6 @@ namespace Dashboard
                 }
             }
         }
-
-
 
         private void City_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1048,17 +1038,12 @@ namespace Dashboard
             newForm2.Show();
         }
 
-
-
-
         // Auto Fill data in Form When We inser id And Click CheckBox  End Here 
-
 
         internal class UpdateEmployeeButton
         {
             public static bool Enabled { get; internal set; }
         }
-
 
         private void Form2_Load_1(object sender, EventArgs e)
         {
@@ -1091,8 +1076,6 @@ namespace Dashboard
         {
 
         }
-
-
 
         private void Female_CheckedChanged(object sender, EventArgs e, Gender gender)
         {
@@ -1159,15 +1142,6 @@ namespace Dashboard
         }
 
 
-
-
-
-        // Drop Down City
-
-
-
-
-        // condiation for check male or female
         private void Male_CheckedChanged(object sender, EventArgs e)
         {
             gender = "Male";
@@ -1181,9 +1155,6 @@ namespace Dashboard
 
 
         }
-
-
-
 
         private void NotePad_Click_1(object sender, EventArgs e)
         {
@@ -1254,7 +1225,7 @@ namespace Dashboard
                                 writer.WriteLine(line);
                             }
 
-                            writer.WriteLine(); // Empty line after each page
+                            writer.WriteLine(); 
                         }
                     }
 
@@ -1272,26 +1243,19 @@ namespace Dashboard
 
         private void ClearBtn_Click(object sender, EventArgs e)
         {
-            // Clear textboxes
+            // Clear the all fields
             id.Clear();
             Name.Clear();
             Email.Clear();
             Address.Clear();
             Password.Clear();
 
-            // Uncheck gender radio buttons (assuming Male and Female are RadioButtons)
             Male.Checked = false;
             Female.Checked = false;
 
-            // Clear city ComboBox (reset to the default or the first item if needed)
-            City.SelectedIndex = -1;  // -1 will reset the ComboBox to no selection, or you can use a default index if you prefer
+            City.SelectedIndex = -1;  
 
-            //Dob.Value = DateTime.Now;  // Reset the DatePicker to the current date (or to a specific default date)
         }
-
-
-        
-
 
         private void EmpId_Click(object sender, EventArgs e)
         {
@@ -1311,26 +1275,24 @@ namespace Dashboard
 
         private void CalculatePercentage()
         {
-            // Check if both Marks and TotalMarks have valid values
+            // try to get data from marks and totalmarks and get the valueof persentage
             if (float.TryParse(Marks.Text, out float marks) && float.TryParse(TotalMarks.Text, out float totalMarks))
             {
                 if (totalMarks > 0)
                 {
-                    // Calculate the percentage
                     float percentage = (marks / totalMarks) * 100;
-                    Percentage.Text = percentage.ToString("F2");  // Display percentage with two decimal places
+                    Percentage.Text = percentage.ToString("F2"); 
                 }
                 else
                 {
-                    Percentage.Text = "0";  // Set percentage to 0 if TotalMarks is 0
+                    Percentage.Text = "0.00";
                 }
             }
             else
             {
-                Percentage.Clear();  // Clear the percentage field if invalid input
+                Percentage.Clear();
             }
         }
-
         private void AddDegree_Click(object sender, EventArgs e)
         {
             try
@@ -1455,9 +1417,6 @@ namespace Dashboard
             }
         }
 
-
-
-
         private void ClearFields()
         {
             Employeeid.Clear();
@@ -1470,9 +1429,6 @@ namespace Dashboard
             TotalMarks.Clear();
 
         }
-
-
-
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -1507,8 +1463,6 @@ namespace Dashboard
             {
                 string year = Year.SelectedItem.ToString();
                 MessageBox.Show("You selected: " + Year);
-
-
 
             }
         }
@@ -1596,9 +1550,7 @@ namespace Dashboard
                 conn.Open();
 
                 // ✅ Step 1: Optional — show existing data before deletion
-                string selectQuery = @"SELECT Year, Percentage, Emp_Name, College, Marks 
-                               FROM Qualification 
-                               WHERE id = @Employeeid AND Qualification = @Qualification";
+                string selectQuery = @"SELECT Year, Percentage, Emp_Name, College, Marks FROM Qualification WHERE id = @Employeeid AND Qualification = @Qualification";
 
                 using (SqlCommand selectCmd = new SqlCommand(selectQuery, conn))
                 {
@@ -1646,5 +1598,136 @@ namespace Dashboard
             }
         }
 
+        private void Update_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Employeeid.Text))
+            {
+                MessageBox.Show("Please enter the Employee ID.");
+                return;
+            }
+
+            if (!int.TryParse(Employeeid.Text, out int empId))
+            {
+                MessageBox.Show("Employee ID must be a valid integer.");
+                return;
+            }
+
+            if (Qualification.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a qualification.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Emp_Name.Text) ||
+                string.IsNullOrWhiteSpace(College.Text) ||
+                string.IsNullOrWhiteSpace(Percentage.Text) ||
+                string.IsNullOrWhiteSpace(Marks.Text) ||
+                Year.SelectedItem == null)
+            {
+                MessageBox.Show("Please fill in all fields before updating.");
+                return;
+            }
+
+            string qualification = Qualification.SelectedItem.ToString();
+            string year = Year.SelectedItem.ToString();
+            string empName = Emp_Name.Text.Trim();
+            string college = College.Text.Trim();
+            string percentage = Percentage.Text.Trim();
+            string marks = Marks.Text.Trim();
+
+            string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True;";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string updateQuery = @"
+            UPDATE Qualification
+            SET Year = @Year, Percentage = @Percentage, Emp_Name = @EmpName, College = @College, Marks = @Marks
+            WHERE id = @Employeeid AND Qualification = @Qualification";
+
+                using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
+                {
+                    updateCmd.Parameters.AddWithValue("@Year", year);
+                    updateCmd.Parameters.AddWithValue("@Percentage", percentage);
+                    updateCmd.Parameters.AddWithValue("@EmpName", empName);
+                    updateCmd.Parameters.AddWithValue("@College", college);
+                    updateCmd.Parameters.AddWithValue("@Marks", marks);
+                    updateCmd.Parameters.AddWithValue("@Employeeid", empId);
+                    updateCmd.Parameters.AddWithValue("@Qualification", qualification);
+
+                    int rowsAffected = updateCmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Qualification updated successfully.");
+                        ClearFields(); // Optional: reuse if this exists
+                    }
+                    else
+                    {
+                        MessageBox.Show("No matching qualification found to update.");
+                    }
+                }
+            }
+        }
+
+
+        private void ShowDetails_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Employeeid.Text))
+            {
+                MessageBox.Show("Please enter the Employee ID.");
+                return;
+            }
+
+            if (!int.TryParse(Employeeid.Text, out int empId))
+            {
+                MessageBox.Show("Employee ID must be a valid integer.");
+                return;
+            }
+
+            string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True;";
+            string query = @"SELECT id, Qualification, Year, Percentage, Emp_Name, College, Marks, TotalMarks 
+                     FROM Qualification 
+                     WHERE id = @Employeeid";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(query, conn))
+                {
+                    adapter.SelectCommand.Parameters.AddWithValue("@Employeeid", empId);
+
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        dataGridView1.DataSource = dt;
+                    }
+                    else
+                    {
+                        MessageBox.Show("No qualification records found for this employee.");
+                        dataGridView1.DataSource = null;
+                    }
+                }
+            }
+        }
+      
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string connectionString = "Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True;";
+            string query = @"SELECT id, Qualification, Year, Percentage, Emp_Name, College, Marks, TotalMarks FROM Qualification";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(query, conn))
+                {
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dataGridView1.DataSource = dt;
+                }
+            }
+
+        }
     }
 }

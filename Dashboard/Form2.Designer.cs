@@ -65,8 +65,10 @@ namespace Dashboard
             this.PrintDataButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.ShowDetails = new System.Windows.Forms.Button();
             this.NotePad = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.Update = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.TotalMarks = new System.Windows.Forms.TextBox();
             this.Delete = new System.Windows.Forms.Button();
@@ -87,18 +89,20 @@ namespace Dashboard
             this.Marks = new System.Windows.Forms.TextBox();
             this.Employeeid = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataGrid)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // Exitbtn
             // 
             this.Exitbtn.ForeColor = System.Drawing.Color.Chocolate;
-            this.Exitbtn.Location = new System.Drawing.Point(20, 10);
+            this.Exitbtn.Location = new System.Drawing.Point(6, 10);
             this.Exitbtn.Name = "Exitbtn";
             this.Exitbtn.Size = new System.Drawing.Size(75, 23);
             this.Exitbtn.TabIndex = 2;
@@ -251,10 +255,10 @@ namespace Dashboard
             this.DataGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.Sunken;
             this.DataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataGrid.GridColor = System.Drawing.SystemColors.Control;
-            this.DataGrid.Location = new System.Drawing.Point(46, 444);
+            this.DataGrid.Location = new System.Drawing.Point(0, 444);
             this.DataGrid.Name = "DataGrid";
             this.DataGrid.RowHeadersWidth = 200;
-            this.DataGrid.Size = new System.Drawing.Size(669, 95);
+            this.DataGrid.Size = new System.Drawing.Size(410, 95);
             this.DataGrid.TabIndex = 19;
             this.DataGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGrid_CellContentClick_1);
             // 
@@ -386,7 +390,7 @@ namespace Dashboard
             // 
             // Addbtn
             // 
-            this.Addbtn.Location = new System.Drawing.Point(120, 9);
+            this.Addbtn.Location = new System.Drawing.Point(91, 9);
             this.Addbtn.Name = "Addbtn";
             this.Addbtn.Size = new System.Drawing.Size(75, 23);
             this.Addbtn.TabIndex = 0;
@@ -397,7 +401,7 @@ namespace Dashboard
             // 
             // DeleteEmployee
             // 
-            this.DeleteEmployee.Location = new System.Drawing.Point(226, 10);
+            this.DeleteEmployee.Location = new System.Drawing.Point(177, 10);
             this.DeleteEmployee.Name = "DeleteEmployee";
             this.DeleteEmployee.Size = new System.Drawing.Size(75, 23);
             this.DeleteEmployee.TabIndex = 20;
@@ -407,7 +411,7 @@ namespace Dashboard
             // 
             // SearchAllEmployees
             // 
-            this.SearchAllEmployees.Location = new System.Drawing.Point(337, 10);
+            this.SearchAllEmployees.Location = new System.Drawing.Point(265, 10);
             this.SearchAllEmployees.Name = "SearchAllEmployees";
             this.SearchAllEmployees.Size = new System.Drawing.Size(75, 23);
             this.SearchAllEmployees.TabIndex = 21;
@@ -417,7 +421,7 @@ namespace Dashboard
             // 
             // ImportToExcel
             // 
-            this.ImportToExcel.Location = new System.Drawing.Point(452, 10);
+            this.ImportToExcel.Location = new System.Drawing.Point(354, 10);
             this.ImportToExcel.Name = "ImportToExcel";
             this.ImportToExcel.Size = new System.Drawing.Size(75, 23);
             this.ImportToExcel.TabIndex = 20;
@@ -427,7 +431,7 @@ namespace Dashboard
             // 
             // PrintDataButton
             // 
-            this.PrintDataButton.Location = new System.Drawing.Point(689, 10);
+            this.PrintDataButton.Location = new System.Drawing.Point(564, 10);
             this.PrintDataButton.Name = "PrintDataButton";
             this.PrintDataButton.Size = new System.Drawing.Size(75, 23);
             this.PrintDataButton.TabIndex = 22;
@@ -450,6 +454,7 @@ namespace Dashboard
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel3.Controls.Add(this.ShowDetails);
             this.panel3.Controls.Add(this.NotePad);
             this.panel3.Controls.Add(this.Addbtn);
             this.panel3.Controls.Add(this.PrintDataButton);
@@ -463,9 +468,19 @@ namespace Dashboard
             this.panel3.TabIndex = 25;
             this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
             // 
+            // ShowDetails
+            // 
+            this.ShowDetails.Location = new System.Drawing.Point(650, 10);
+            this.ShowDetails.Name = "ShowDetails";
+            this.ShowDetails.Size = new System.Drawing.Size(127, 23);
+            this.ShowDetails.TabIndex = 28;
+            this.ShowDetails.Text = "Show Qualification";
+            this.ShowDetails.UseVisualStyleBackColor = true;
+            this.ShowDetails.Click += new System.EventHandler(this.ShowDetails_Click);
+            // 
             // NotePad
             // 
-            this.NotePad.Location = new System.Drawing.Point(556, 10);
+            this.NotePad.Location = new System.Drawing.Point(442, 10);
             this.NotePad.Name = "NotePad";
             this.NotePad.Size = new System.Drawing.Size(109, 23);
             this.NotePad.TabIndex = 23;
@@ -476,6 +491,7 @@ namespace Dashboard
             // panel4
             // 
             this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel4.Controls.Add(this.Update);
             this.panel4.Controls.Add(this.label15);
             this.panel4.Controls.Add(this.TotalMarks);
             this.panel4.Controls.Add(this.Delete);
@@ -500,6 +516,16 @@ namespace Dashboard
             this.panel4.Size = new System.Drawing.Size(251, 284);
             this.panel4.TabIndex = 26;
             // 
+            // Update
+            // 
+            this.Update.Location = new System.Drawing.Point(64, 254);
+            this.Update.Name = "Update";
+            this.Update.Size = new System.Drawing.Size(56, 23);
+            this.Update.TabIndex = 40;
+            this.Update.Text = "Update";
+            this.Update.UseVisualStyleBackColor = true;
+            this.Update.Click += new System.EventHandler(this.Update_Click);
+            // 
             // label15
             // 
             this.label15.AutoSize = true;
@@ -521,7 +547,7 @@ namespace Dashboard
             // 
             this.Delete.Location = new System.Drawing.Point(6, 254);
             this.Delete.Name = "Delete";
-            this.Delete.Size = new System.Drawing.Size(75, 23);
+            this.Delete.Size = new System.Drawing.Size(41, 23);
             this.Delete.TabIndex = 37;
             this.Delete.Text = "Delete";
             this.Delete.UseVisualStyleBackColor = true;
@@ -529,9 +555,9 @@ namespace Dashboard
             // 
             // Find
             // 
-            this.Find.Location = new System.Drawing.Point(86, 253);
+            this.Find.Location = new System.Drawing.Point(132, 253);
             this.Find.Name = "Find";
-            this.Find.Size = new System.Drawing.Size(75, 23);
+            this.Find.Size = new System.Drawing.Size(42, 23);
             this.Find.TabIndex = 36;
             this.Find.Text = "Find";
             this.Find.UseVisualStyleBackColor = true;
@@ -583,9 +609,9 @@ namespace Dashboard
             // 
             // AddDegree
             // 
-            this.AddDegree.Location = new System.Drawing.Point(165, 252);
+            this.AddDegree.Location = new System.Drawing.Point(192, 252);
             this.AddDegree.Name = "AddDegree";
-            this.AddDegree.Size = new System.Drawing.Size(75, 23);
+            this.AddDegree.Size = new System.Drawing.Size(42, 23);
             this.AddDegree.TabIndex = 13;
             this.AddDegree.Text = "AddDegree";
             this.AddDegree.UseVisualStyleBackColor = true;
@@ -682,12 +708,22 @@ namespace Dashboard
             this.label9.Text = "Add  Qualification";
             this.label9.UseWaitCursor = true;
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(409, 444);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(376, 95);
+            this.dataGridView1.TabIndex = 28;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.ClientSize = new System.Drawing.Size(784, 553);
+            this.ClientSize = new System.Drawing.Size(781, 553);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -696,7 +732,7 @@ namespace Dashboard
             this.Controls.Add(this.DataGrid);
             this.Controls.Add(this.lblMessage);
             this.ForeColor = System.Drawing.SystemColors.InfoText;
-            this.Name = "Form2";
+            
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.Load += new System.EventHandler(this.Form2_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -708,6 +744,7 @@ namespace Dashboard
             this.panel3.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -788,5 +825,8 @@ namespace Dashboard
         private System.Windows.Forms.Button Delete;
         private System.Windows.Forms.TextBox TotalMarks;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button Update;
+        private System.Windows.Forms.Button ShowDetails;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }

@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataGridComboBoxColumn.cs" />
+    <Compile Include="dataGridView1.cs" />
     <Compile Include="Employee.cs" />
     <Compile Include="EmployeeID.cs" />
     <Compile Include="EmployeeListBox.cs" />

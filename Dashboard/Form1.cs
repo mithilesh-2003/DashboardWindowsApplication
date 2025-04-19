@@ -12,7 +12,7 @@ namespace Dashboard
         private readonly SqlConnection con = new SqlConnection("Data Source=DESKTOP-4HDIA6Q;Initial Catalog=Dashboard;Integrated Security=True");
         SqlCommand cmd;
         SqlDataReader dr;
-        private object bunifuMaterialtxtname;
+       // private object bunifuMaterialtxtname;
 
         public static string Users { get; internal set; }
 
